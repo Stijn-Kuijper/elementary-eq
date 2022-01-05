@@ -87,15 +87,19 @@ export default function App() {
   }
   
   useEffect(() => {
-    const left  = el.in({channel: 0});
-    const right = el.in({channel: 1});
+    core.on('load', function(e) {
+      const left  = el.in({channel: 0});
+      const right = el.in({channel: 1});
 
-    const {l, r} = params.reduce(
-      (previous, current) => applyBand(current, previous.l, previous.r),
-      {l: left, r: right} // initial value
-    );
+      const {l, r} = params.reduce(
+        (previous, current) => applyBand(current, previous.l, previous.r),
+        {l: left, r: right} // initial value
+      );
 
-    core.render(l, r);
+      core.render(l, r);
+    });
+
+    core.initialize();
   })
 
   const bands = [];

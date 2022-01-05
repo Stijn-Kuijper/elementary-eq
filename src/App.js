@@ -4,6 +4,8 @@ import { ElementaryPluginRenderer as core, el } from '@nick-thompson/elementary'
 
 export default function App() {
 
+  let [loaded, setLoaded] = useState(false);
+
   let [params, setParams] = useState([
     {key: 'eq1', fc: 1000, q: 1.414, g: 3, type: 'highshelf', bypass: false, channels: 'stereo'},
     {key: 'eq2', fc: 10000, q: 0.717, g: -3, type: 'peak', bypass: false, channels: 'left'},
@@ -88,19 +90,25 @@ export default function App() {
   
   useEffect(() => {
     core.on('load', function(e) {
-      const left  = el.in({channel: 0});
-      const right = el.in({channel: 1});
-
-      const {l, r} = params.reduce(
-        (previous, current) => applyBand(current, previous.l, previous.r),
-        {l: left, r: right} // initial value
-      );
-
-      core.render(l, r);
-    });
+      setLoaded(true);
+    })
 
     core.initialize();
-  })
+  }, []);
+
+  useEffect(function() {
+    if (!loaded) return;
+
+    const left  = el.in({channel: 0});
+    const right = el.in({channel: 1});
+
+    const {l, r} = params.reduce(
+      (previous, current) => applyBand(current, previous.l, previous.r),
+      {l: left, r: right} // initial value
+    );
+
+    core.render(l, r);
+  });
 
   const bands = [];
   for (let i = 0; i < params.length; i++){

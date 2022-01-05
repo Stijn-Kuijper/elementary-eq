@@ -105,7 +105,7 @@ export default function App() {
   const bands = [];
   for (let i = 0; i < params.length; i++){
     bands.push(
-      <div>
+      <div key={i}>
         <input
           type="range"
           min="20"
